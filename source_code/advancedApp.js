@@ -542,3 +542,24 @@ var linker = ui.Map.Linker([leftMap, rightMap]);
 
 //rightMap.centerObject(aoi, 7);
 leftMap.centerObject(aoi, 7);
+
+// Function to upload and display ground truth data
+var uploadGroundTruth = function() {
+  var groundTruth = ui.FileUpload({
+    onChange: function(files) {
+      var file = files[0];
+      var reader = new FileReader();
+      reader.onload = function(event) {
+        var geojson = JSON.parse(event.target.result);
+        var groundTruthFC = ee.FeatureCollection(geojson);
+        Map.addLayer(groundTruthFC, {color: 'red'}, 'Ground Truth');
+      };
+      reader.readAsText(file);
+    }
+  });
+  return groundTruth;
+};
+
+// Add the ground truth uploader to the UI
+var groundTruthUploader = uploadGroundTruth();
+Map.add(groundTruthUploader);
