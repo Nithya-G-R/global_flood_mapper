@@ -56,12 +56,4 @@ var getFloodShpUrl = function(floodLayer, value, radius, aoi, cellSize, filename
 }
 
 exports.getFloodShpUrl = getFloodShpUrl;
-
-  
-  // print download url
-  var vector_url = flood_vector.getDownloadURL('kml', [], filename)
-  
-  return(vector_url)
-}
-
-exports.getFloodShpUrl = getFloodShpUrl;
+;
