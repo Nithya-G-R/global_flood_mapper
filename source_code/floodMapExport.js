@@ -24,6 +24,39 @@ var getFloodShpUrl = function(floodLayer, value, radius, aoi, cellSize, filename
   
   // Convert the vector to feature collection
   var flood_vector = ee.FeatureCollection(vectors);
+
+// Function to export each flood class
+  var exportFloodClass = function(floodClass, classValue, filename) {
+    var classFlood = floodClass.eq(classValue);
+    var vectors = classFlood.reduceToVectors({
+      geometry: aoi,
+      crs: floodClass.projection(),
+      scale: cellSize,
+      geometryType: 'polygon',
+      eightConnected: false,
+      labelProperty: 'zone',
+      maxPixels: 9e12
+    });
+
+    var flood_vector = ee.FeatureCollection(vectors);
+    var vector_url = flood_vector.getDownloadURL('kml', [], filename + '_class_' + classValue);
+    return vector_url;
+  };
+
+  // Array of flood classes (0 to 4)
+  var floodClasses = [0, 1, 2, 3, 4];
+  
+  // Create an array of URLs for each flood class
+  var floodUrls = floodClasses.map(function(classValue) {
+    return exportFloodClass(smooth_flood_binary, classValue, filename);
+  });
+
+  // Return the array of URLs
+  return floodUrls;
+}
+
+exports.getFloodShpUrl = getFloodShpUrl;
+
   
   // print download url
   var vector_url = flood_vector.getDownloadURL('kml', [], filename)
